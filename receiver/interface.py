@@ -1,6 +1,7 @@
 from tkinter import * 
 from player import Player
 import audio_utilities as util
+from emission_driver import *
 
 
 fenetre = Tk()
@@ -120,6 +121,37 @@ def stop_dtmf():
 Button(dtmfFreq, text ='Generate', command= generate_dtmf).pack(side=LEFT, padx=5, pady=5)
 Button(dtmfFreq, text ='Stop', command= stop_dtmf).pack(side=RIGHT, padx=5, pady=5)
 
+
+
+# Data emission
+dataFreq = LabelFrame(fenetre,text="Data emitter")
+dataFreq.pack()
+checkedData = IntVar()
+high_freq_data = Checkbutton(dataFreq, text="High frequencies", variable=checkedData).pack(side=LEFT, padx=20)
+
+dataString = StringVar()
+input_field_data = Entry(dataFreq,text="Not started", textvariable=dataString).pack(side=LEFT, padx=20)
+
+
+
+emission_driver = None
+def emit_data():
+    global emission_driver
+    high = bool(checked.get())
+    toTransmit = dataString.get()
+    if emission_driver == None:
+        emission_driver = Emission_Driver(high, [1,1,0,1,1,1,0,1])
+        emission_driver.start()
+
+def stop_data():
+    global emission_driver
+    if emission_driver != None:
+        emission_driver.stop()
+        emission_driver = None
+
+Button(dataFreq, text ='Emit', command= emit_data).pack(side=LEFT, padx=5, pady=5)
+Button(dataFreq, text ='Stop', command= stop_data).pack(side=RIGHT, padx=5, pady=5)
+
 fenetre.mainloop()
 
 if player != None:
@@ -127,3 +159,6 @@ if player != None:
 
 if playerDual != None:
     playerDual.stop()
+
+if emission_driver != None:
+    emission_driver.stop()

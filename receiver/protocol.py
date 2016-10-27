@@ -1,3 +1,5 @@
+from enum import Enum
+
 CHANNELS = {
     'BIT_0' : 1200,
     'BIT_1' : 700,
@@ -8,28 +10,22 @@ CHANNELS = {
     'CLOCK' : 1600
     }
 
-def define_reversed_channels() :
-    reverted = {}
-    for key in CHANNELS.keys():
-        value = CHANNELS[key]
-        reverted[value] = key
-
-    return reverted
-
-REVERTED_CHANNELS = define_reversed_channels()
+FREQUENCIES = {}
+for (k,v) in CHANNELS.items():
+  FREQUENCIES[v] = k
 
 
-STATES = {
-    'NOT_READY',
-    'WAITING_INCOMING',
-    'WAITING_ACKNOWLEDGEMENT',
-    'WAITING_DATA',
-    'DATA_EMISSION',
-    'DATA_RECEPTION',
-    'WAITING_CONFIRMATION',
-    'ERROR_STATE',
-    'TRANSMISSION_END'
-}
+class States(Enum):
+    NOT_READY = 1
+    WAITING_INCOMING = 2
+    WAITING_ACKNOWLEDGEMENT = 3
+    WAITING_DATA = 4
+    DATA_EMISSION = 5
+    DATA_RECEPTION = 6
+    DATA_END = 7
+    WAITING_CONFIRMATION = 8
+    ERROR_STATE = 9
+    TRANSMISSION_END = 10
 
 TRANSITIONS = {'NOT_READY' : {},
                'WAITING_INCOMING' : {'TRANSMISSION_DEMAND', 'ERROR'},

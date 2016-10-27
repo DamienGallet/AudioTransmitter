@@ -3,6 +3,7 @@ import constants as const
 import goertzel as gz
 from listener_driver import *
 from tkinter import * 
+from reception_driver import *
 
 fenetre = Tk()
 fenetre.wm_title("Frequency detector")
@@ -141,36 +142,42 @@ def stop_DTMF_digit():
 Button(digitFreq_DTMF, text ='Listen', command= listen_DTMF_digit).pack(side=LEFT, padx=5, pady=5)
 Button(digitFreq_DTMF, text ='Stop', command= stop_DTMF_digit).pack(side=RIGHT, padx=5, pady=5)
 
-# Dual frequency part DTMF
-dtmfFreq = LabelFrame(fenetre,text="DTMF frequency generator")
-dtmfFreq.pack()
-label_spinbox_DT = Label(dtmfFreq,text="Select the number")
-spinbox_dtmf = Spinbox(dtmfFreq, from_=1, to=9)
-checked = IntVar()
-high_freq = Checkbutton(dtmfFreq, text="High frequencies", variable=checked)
 
-label_spinbox_DT.pack(side=LEFT,  padx=20)
-spinbox_dtmf.pack(side=LEFT, padx=20)
-high_freq.pack(side=LEFT, padx=20)
+# Data receiver
+dataFreq = LabelFrame(fenetre,text="Data receiver")
+dataFreq.pack()
+checkedData = IntVar()
+high_freq_data = Checkbutton(dataFreq, text="High frequencies", variable=checkedData).pack(side=LEFT, padx=20)
 
+dataString = StringVar()
+output_field_data = Label(dataFreq,text="Not started", textvariable=dataString).pack(side=LEFT, padx=20)
 
-def generate_dtmf():
-    number = int(spinbox_dtmf.get())
-    high = bool(checked.get())
-    freqs = util.dtmf_freq(number,high)
-    spinbox_DA_var.set(freqs[0])
-    spinbox_DB_var.set(freqs[1])
-    generate_dual()
+def output_data(data):
+    dataString.set(data)
 
-def stop_dtmf():
-    stop_dual()
+reception_driver = None
+def listen_data():
+    global reception_driver
+    high = bool(checkedData.get())
+    if reception_driver == None:
+        reception_driver = Reception_Driver(high,output_data)
+        reception_driver.start()
 
-Button(dtmfFreq, text ='Generate', command= generate_dtmf).pack(side=LEFT, padx=5, pady=5)
-Button(dtmfFreq, text ='Stop', command= stop_dtmf).pack(side=RIGHT, padx=5, pady=5)
+def stop_data():
+    global reception_driver
+    if reception_driver != None:
+        reception_driver.stop()
+        reception_driver = None
+
+Button(dataFreq, text ='Start listening', command= listen_data).pack(side=LEFT, padx=5, pady=5)
+Button(dataFreq, text ='Stop', command= stop_data).pack(side=RIGHT, padx=5, pady=5)
 
 fenetre.mainloop()
 
 if listener_driver != None:
     listener_driver.stop()
+
+if reception_driver != None:
+    reception_driver.stop()
 
 print("End mainloop")

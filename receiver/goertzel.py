@@ -43,7 +43,6 @@ def goetzl(datas, f):
     }
 
     currentMagnitude = computeFrame(datas,goetrl_param)
-    print (currentMagnitude)
     return currentMagnitude
 
 def computeSample(sample, q0, q1, q2,goetrl_param):
