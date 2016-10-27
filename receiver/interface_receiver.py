@@ -4,6 +4,7 @@ import goertzel as gz
 from listener_driver import *
 from tkinter import * 
 from reception_driver import *
+import utilities as bin_util
 
 fenetre = Tk()
 fenetre.wm_title("Frequency detector")
@@ -153,12 +154,16 @@ dataString = StringVar()
 output_field_data = Label(dataFreq,text="Not started", textvariable=dataString).pack(side=LEFT, padx=20)
 
 def output_data(data):
-    dataString.set(data)
+    current = dataString.get()
+    char = bin_util.get_char_from_binary(data)
+    dataString.set(current+char)
+
 
 reception_driver = None
 def listen_data():
     global reception_driver
     high = bool(checkedData.get())
+    dataString = ''
     if reception_driver == None:
         reception_driver = Reception_Driver(high,output_data)
         reception_driver.start()

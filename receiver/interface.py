@@ -1,6 +1,7 @@
 from tkinter import * 
 from player import Player
 import audio_utilities as util
+import utilities as bin_util
 from emission_driver import *
 
 
@@ -130,6 +131,7 @@ checkedData = IntVar()
 high_freq_data = Checkbutton(dataFreq, text="High frequencies", variable=checkedData).pack(side=LEFT, padx=20)
 
 dataString = StringVar()
+dataString.set("default")
 input_field_data = Entry(dataFreq,text="Not started", textvariable=dataString).pack(side=LEFT, padx=20)
 
 
@@ -139,8 +141,11 @@ def emit_data():
     global emission_driver
     high = bool(checked.get())
     toTransmit = dataString.get()
+    print(toTransmit)
+    binaries = bin_util.get_binaries_from_char(toTransmit)
+    print(binaries)
     if emission_driver == None:
-        emission_driver = Emission_Driver(high, [[1,1,0,1,1,1,0,1],[0,0,1,1,0,1,0,1]])
+        emission_driver = Emission_Driver(high, binaries)
         emission_driver.start()
 
 def stop_data():
