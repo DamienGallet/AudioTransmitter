@@ -99,25 +99,26 @@ digitFreq_DTMF = LabelFrame(fenetre,text="Digit detector (dtmf)")
 digitFreq_DTMF.pack()
 
 checked_DTMF = IntVar()
-high_freq_DTMF = Checkbutton(digitFreq_DTMF, text="High frequencies", variable=checked_DG).pack(side=LEFT, padx=20)
+high_freq_DTMF = Checkbutton(digitFreq_DTMF, text="High frequencies", variable=checked_DTMF).pack(side=LEFT, padx=20)
 output_field_DTMF = Label(digitFreq_DTMF,text="Not started")
 output_field_DTMF.pack(side=LEFT, padx=20)
 
 def output_single_digit(result):
-    detected = 0
+    detected = []
     high = bool(checked_DTMF.get())
     current_max = 0
     for (f,r) in result.items():
-        if r>5*10**19 and r>current_max:
-            detected = util.number_from_freq(f, high)
-            current_max = r
+        if r>5*10**19:
+            detected.append(f)
+    if len(detected)==0:
+        output_field_DTMF['text'] = 'No freq detected'
+    else:
+        number = util.number_from_dtmf(detected,high)
 
-    if detected == 10:
-        output_field_sd['text'] = 'Multiple frequencies detected'
-    elif detected == 0:
-        output_field_sd['text'] = 'No freq detected'
-    else :
-        output_field_sd['text'] = 'Number : '+str(detected)+' transmitted'
+        if number not in range(0,10):
+            output_field_DTMF['text'] = 'Error'
+        else :
+            output_field_DTMF['text'] = 'Number : '+str(number)+' transmitted'
 
 
 
@@ -125,7 +126,7 @@ def listen_DTMF_digit():
     global listener_driver
     if listener_driver == None:
         high = bool(checked_DTMF.get())
-        frequencies = util.number_freqs(high)
+        frequencies = util.dtmf_freqs_only(high)
         listener_driver = Listener(frequencies, 8192, const.FREQUENCY, gz.goetzl_driver_continuous, output_single_digit, 5*10**19)
         listener_driver.start()
 
@@ -133,7 +134,7 @@ def stop_DTMF_digit():
     global listener_driver
     if listener_driver != None:
         print('stop button')
-        output_field['text'] = 'Not started'
+        output_field_DTMF['text'] = 'Not started'
         listener_driver.stop()
         listener_driver = None
 

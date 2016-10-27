@@ -51,17 +51,26 @@ def number_from_freq(freq,high):
         nb = (freq/100) - 10 
     return nb
 
-def dtmf_freq(number, high):
+def dtmf_freqs_only(high):
+    freq = [697,770,852,1209,1336,1477]
+    freq_high = [13000,13100,13200,13800,13900,14000]
+
+    if high:
+        return freq_high
+    else:
+        return freq
+
+def dtmf_freq(number, high, raw=False):
     freq =      [   [0,0],
-                    [1209,697],
-                    [1336,697],
-                    [1477,697],
-                    [1209,770],
-                    [1336,770],
-                    [1477,770],
-                    [1209,852],
-                    [1336,852],
-                    [1477,852]]
+                    [697,1209],
+                    [697,1336],
+                    [697,1477],
+                    [770,1209],
+                    [770,1336],
+                    [770,1477],
+                    [852,1209],
+                    [852,1336],
+                    [852,1477]]
 
     freq_high = [   [0,0],
                     [13000,13800],
@@ -73,12 +82,24 @@ def dtmf_freq(number, high):
                     [13000,14000],
                     [13100,14000],
                     [13200,14000]]
+    if raw:
+        if high:
+            return freq_high
+        else:
+            return freq
 
     if high:
         return freq_high[number]
     else:
         return freq[number]
 
+def number_from_dtmf(freqs, high):
+    ordered = sorted(freqs)
+    dtmf_freqs = dtmf_freq(0,high,True)
+    for i in range(len(dtmf_freqs)):
+        if dtmf_freqs[i] == ordered:
+            return i
+    return 11
 
 def convert_recording(in_data, frame_count):
     print(frame_count)
