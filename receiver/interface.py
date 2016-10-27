@@ -140,7 +140,7 @@ def emit_data():
     high = bool(checked.get())
     toTransmit = dataString.get()
     if emission_driver == None:
-        emission_driver = Emission_Driver(high, [1,1,0,1,1,1,0,1])
+        emission_driver = Emission_Driver(high, [[1,1,0,1,1,1,0,1],[0,0,1,1,0,1,0,1]])
         emission_driver.start()
 
 def stop_data():
