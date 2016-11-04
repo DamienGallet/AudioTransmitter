@@ -105,7 +105,7 @@ high_freq_DTMF = Checkbutton(digitFreq_DTMF, text="High frequencies", variable=c
 output_field_DTMF = Label(digitFreq_DTMF,text="Not started")
 output_field_DTMF.pack(side=LEFT, padx=20)
 
-def output_single_digit(result):
+def output_DTMF_digit(result):
     detected = []
     high = bool(checked_DTMF.get())
     current_max = 0
@@ -129,7 +129,7 @@ def listen_DTMF_digit():
     if listener_driver == None:
         high = bool(checked_DTMF.get())
         frequencies = util.dtmf_freqs_only(high)
-        listener_driver = Listener(frequencies, 8192, const.FREQUENCY, gz.goetzl_driver_continuous, output_single_digit, 5*10**19)
+        listener_driver = Listener(frequencies, 8192, const.FREQUENCY, gz.goetzl_driver_continuous, output_DTMF_digit, 5*10**19)
         listener_driver.start()
 
 def stop_DTMF_digit():
